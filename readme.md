@@ -4,5 +4,5 @@
 
 Ejecutar ```Npm Install``` para reconstruir los modulos
 
+Cruid  Listo
 
-Pd: Sirve para no tener que estar creando desde 0 el backend y tambien como una guia a futuro.
