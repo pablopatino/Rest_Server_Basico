@@ -1,33 +1,71 @@
 const { response } = require('express');
+const becrypt = require('bcryptjs')
 
-const getUsuarios = ( req, res = response ) => {
+const Usuario = require('../models/usuario.model');
 
-    const params = req.query;
+
+const getUsuarios = async( req, res = response ) => {
+
+    const { limite = 5, desde = 0 } = req.query;
+
+    const [ total, usuarios ] = await Promise.all([
+        Usuario.countDocuments({ estado: true }),
+        Usuario.find({ estado: true })
+            .skip(Number(desde))
+            .limit(Number(limite))
+    ]);
     
     res.status(200).json({
-        ok: true,
-        msg: 'Funcino el get'
-    })
+        total,
+        usuarios
+    });
 }
 
-const postUser = ( req, res = responseres ) => {
+const postUser = async ( req, res = response ) => {
     
-    const { nombre, edad } = req.body
+    try {
+         
+        const { nombre, correo, password, rol } = req.body;
+        const usuario = new Usuario({ nombre, correo, password, rol });
 
-    res.status(200).json({
-        ok: true,
-        msg: 'Funcino el post',
-    })
+    
+        //Encriptar contraseñas
+        const salt = becrypt.genSaltSync();
+        usuario.password = becrypt.hashSync( password, salt );
+
+        await usuario.save();
+            
+        res.status(200).json({
+            ok: true,
+            msg: 'Usuario creado correctamente el post',
+            usuario
+        })
+        
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
-const putUser = ( req, res = response ) => {
+const putUser = async( req, res = response ) => {
 
-    const { userId }  = req.params
+    const { userId }  = req.params;
+    const { _id ,password, google, correo, ...resto } = req.body;
+
+    //TODO validar contra la base de datos
+    if ( password ) {
+        
+        const salt = becrypt.genSaltSync();
+        resto.password = becrypt.hashSync( password, salt );
+
+    }
+
+    const usuarioDB = await Usuario.findByIdAndUpdate( userId, resto );
 
     res.status(200).json({
         ok: true,
-        msg: 'Funcino el put',
-        userId
+        msg: 'Usuario actualizado',
+        usuarioDB
     })
 }
 
@@ -38,10 +76,15 @@ const patchUser = ( req, res = response ) => {
     })
 }
 
-const deleteUser =  ( req, res = response ) => {
+const deleteUser =  async( req, res = response ) => {
+
+    const { userId } = req.params
+
+    //Borrar fisicamente
+    const usuario = await Usuario.findByIdAndUpdate( userId, { estado: false } );
+
     res.status(403).json({
-        ok: true,
-        msg: 'Funcino el delete'
+        usuario
     })
 }
 
