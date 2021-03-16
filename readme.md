@@ -4,5 +4,5 @@
 
 Ejecutar ```Npm Install``` para reconstruir los modulos
 
-Cruid  Listo
+Crud  Listo
 
