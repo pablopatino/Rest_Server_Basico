@@ -80,11 +80,15 @@ const deleteUser =  async( req, res = response ) => {
 
     const { userId } = req.params
 
-    //Borrar fisicamente
+    const usuarioAutenticado = req.usuario
+
+    //Borrar solo cuando el estado esta en true
     const usuario = await Usuario.findByIdAndUpdate( userId, { estado: false } );
 
+
     res.status(403).json({
-        usuario
+        usuario,
+        usuarioAutenticado
     })
 }
 
