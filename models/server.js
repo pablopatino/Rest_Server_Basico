@@ -13,6 +13,8 @@ class Server{
              auth:       '/api/auth',
              categorias: '/api/categorias',
              users:      '/api/users',
+             productos:  '/api/productos',
+             buscar:      '/api/buscar'
          }
 
          //Conexion a la base de datos
@@ -48,6 +50,8 @@ class Server{
         this.app.use( this.path.auth , require('../routes/auth'))
         this.app.use( this.path.categorias , require('../routes/categorias'))
         this.app.use( this.path.users , require('../routes/user'))
+        this.app.use( this.path.productos , require('../routes/productos'))
+        this.app.use( this.path.buscar , require('../routes/buscar'))
 
 
     }

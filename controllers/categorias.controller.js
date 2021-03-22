@@ -1,6 +1,7 @@
 const { response } = require("express");
 
 const { Categoria } = require('../models')
+const { generarJWT } = require("../helpers/generarJWT");
 
 
 const obtenerCategorias = async( req, res = response ) => {
@@ -64,9 +65,14 @@ const crearCategoria = async( req, res = response ) => {
 
     await categoria.save();
 
+    const token = await generarJWT( categoria.id );
+
+    
     res.json({
-        msg: `La categoria: ${ nombre }, ha sido creada`
+        msg: `La categoria: ${ nombre }, ha sido creada`,
+        token
     })
+
 
 }
 
